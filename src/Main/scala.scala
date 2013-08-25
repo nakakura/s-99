@@ -88,6 +88,68 @@ object Main{
   def encode_ans(ls: List[Symbol]): List[(Int, Symbol)] =
     pack(ls) map { e => (e.length, e.head) }
 
+  //P11 (*) Modified run-length encoding.
+  def encodeModified(list: List[Symbol]): List[Any] = {
+    encode(list) map { t =>
+      if(t._1 == 1) t._2
+      else t
+    }
+  }
+
+  //P12 (**) Decode a run-length encoded list.
+  def decode(list: List[(Int, Symbol)]): List[Symbol] = {
+    list flatMap  { t =>
+      for(x <- 1 to t._1) yield t._2
+    }
+  }
+
+  //P12 answer
+  def decode_answer[A](ls: List[(Int, A)]): List[A] =
+    ls flatMap { e => List.make(e._1, e._2) }
+
+  //P13 (**) Run-length encoding of a list (direct solution).
+  def encodeDirect[A](ls: List[A]): List[(Int, A)] =
+    if (ls.isEmpty) Nil
+    else {
+      val (packed, next) = ls span { _ == ls.head }
+      (packed.length, packed.head) :: encodeDirect(next)
+    }
+
+  //P14 (*) Duplicate the elements of a list.
+  def duplicate(list: List[Symbol]): List[Symbol] = {
+    println("p14")
+    list flatMap  {t =>
+      List(t, t)
+    }
+  }
+
+  //P15 (**) Duplicate the elements of a list a given number of times.
+  def duplicateN(n: Int, list: List[Symbol]): List[Symbol] = {
+    println("p15")
+    list flatMap  {t =>
+      for(x <- 1 to n) yield t
+    }
+  }
+
+  //P16 (**) Drop every Nth element from a list.
+  def drop(n: Int, list: List[Symbol]): List[Symbol] = {
+    println("p16")
+    def drop_sub(n: Int, ret: List[Symbol], src: List[Symbol]): List[Symbol] = {
+      (n, src) match {
+        case (_, Nil) => ret.reverse
+        case (1, x :: tail) => drop_sub(n-1, ret, tail)
+        case (_, x :: tail) => drop_sub(n-1, x::ret, tail)
+      }
+    }
+
+    drop_sub(n, Nil, list)
+  }
+
+  //P17 (*) Split a list into two parts.
+  def split(n:Int, list: List[Symbol]): (List[Symbol], List[Symbol]) = {
+    (list.take(n), list.drop(n))
+  }
+
   def main(args: Array[String]){
     println(last(List(1,2,3,4,5)))
     println(penultimate(List(1,2,3,4,5)))
@@ -102,5 +164,11 @@ object Main{
     println(pack(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)))
     println(encode(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)))
     println(encode_ans(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)))
+    println(encodeModified(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)))
+    println(decode(List((4, 'a), (1, 'b), (2, 'c), (2, 'a), (1, 'd), (4, 'e))))
+    println(duplicate(List('a, 'b, 'c, 'c, 'd)))
+    println(duplicateN(3, List('a, 'b, 'c, 'c, 'd)))
+    println(drop(3, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)))
+    println(split(3, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)))
   }
 }
