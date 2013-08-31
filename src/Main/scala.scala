@@ -225,6 +225,27 @@ object Main{
       b <- combinations(groupLen(1), noA)
     } yield List(a, b, noA.filterNot(x => b.contains(x)))
 
+  //P28 (**) Sorting a list of lists according to length of sublists.
+  def lsort[A](list: List[List[A]]): List[List[A]] = {
+    list.sortWith((o1, o2) =>
+      o1.length < o2.length
+    )
+  }
+
+  def lsortFreq[A](list: List[List[A]]): List[List[A]] = {
+    val hoge = list map { _.length } sortWith((o1, o2) => o1 < o2)
+    println(Map(encode(hoge) map {_.swap}:_*))
+    val lengthMap = collection.mutable.Map[Int, Int]()
+    list.foreach(x =>{
+      if(lengthMap.contains(x.length)) lengthMap(x.length) += 1
+      else lengthMap(x.length) = 1
+    })
+
+    list.sortWith((o1, o2) =>
+      lengthMap(o1.length) < lengthMap(o2.length)
+    )
+  }
+
   def test[A](listA: List[A], listB: List[A]): Unit = {
     val map1 = listA.flatMap{x => x :: List(99)}
     println(map1)
@@ -247,7 +268,8 @@ object Main{
   def main(args: Array[String]){
     //val before = System.currentTimeMillis
     //println(randomPermute(List('a, 'b, 'c, 'd, 'e, 'f)))
-    test(List(1,2,3), List(10,20,30))
+    println(lsort(List(List('a, 'b, 'c), List('d, 'e), List('f, 'g, 'h), List('d, 'e), List('i, 'j, 'k, 'l), List('m, 'n), List('o))))
+    println(lsortFreq(List(List('a, 'b, 'c), List('d, 'e), List('f, 'g, 'h), List('d, 'e), List('i, 'j, 'k, 'l), List('m, 'n), List('o))))
     //println( System.currentTimeMillis - before  )
   }
 }
