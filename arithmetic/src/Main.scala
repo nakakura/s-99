@@ -16,7 +16,7 @@ class S99Int(n:Int){
   def isCoprimeTo(x: Int): Boolean = S99Int.gcd(n, x) == 1
 
   //P34 (**) Calculate Euler's totient function phi(m).
-  def totient(): Int = {
+  def totientP34(): Int = {
     List.range(1, n).filter(n.isCoprimeTo(_)).length
   }
 
@@ -47,8 +47,9 @@ class S99Int(n:Int){
   def primeFactoryMultiplicity(): List[(Int, Int)] = {
     encode(n.primeFactors())
   }
-
 }
+
+
 
 object S99Int{
   //P32 (**) Determine the greatest common divisor of two positive integer numbers.
