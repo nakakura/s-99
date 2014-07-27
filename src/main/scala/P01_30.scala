@@ -3,9 +3,9 @@
  */
 import java.util.Date
 
-object P01_20 {
+object P01_30 {
   def main(args: Array[String]): Unit = {
-    println(removeAt(1, List('a, 'b, 'c, 'd)))
+    println(lsortFreq(List(List('a, 'b, 'c), List('d, 'e), List('f, 'g, 'h), List('d, 'e), List('i, 'j, 'k, 'l), List('m, 'n), List('o))))
   }
 
   //P01 (*) Find the last element of a list.
@@ -138,6 +138,7 @@ object P01_20 {
     else list.drop(list.length + n) ++ list.take(list.length + n)
   }
 
+  //P20 (*) Remove the Kth element from a list.
   def removeAt[A](n: Int, list: List[A]): (List[A], A) = {
     val ret = list.zipWithIndex.foldLeft((List.empty[A], list.head))((z, item) =>{
       if(item._2 == n) (z._1, item._1)
@@ -145,5 +146,84 @@ object P01_20 {
     })
 
     (ret._1.reverse, ret._2)
+  }
+
+  //P21 (*) Insert an element at a given position into a list.
+  def insertAt[A](appendItem: A, position: Int, list: List[A]): List[A] = {
+    list.zipWithIndex.flatMap{
+      case (item, index) if index == position => appendItem :: (item :: Nil)
+      case (item, _) => item :: Nil
+    }
+  }
+
+  //P22 (*) Create a list containing all integers within a given range.
+  def range(start: Int, end: Int): List[Int] = {
+    (for(i <- start to end) yield i).toList
+  }
+
+  //P23 (**) Extract a given number of randomly selected elements from a list.
+  def randomSelect[A](num: Int, list: List[A]): List[A] = {
+    if(num == 0) return Nil
+    val (l, e) = removeAt(num, list)
+    e :: randomSelect(num - 1, l)
+  }
+
+  //P24 (*) Lotto: Draw N different random numbers from the set 1..M.
+  def lotto(num: Int, max: Int): List[Int] = {
+    if(num <= 0) return Nil
+    val randomInt: Int = math.floor(math.random * max).toInt + 1
+    if(randomInt > max) lotto(num, max)
+    else randomInt :: lotto(num - 1, max)
+  }
+
+  //P25 (*) Generate a random permutation of the elements of a list.
+  def randomPermute[A](list: List[A]): List[A] = {
+    randomSelect(list.length, list)
+  }
+
+  //P26 (**) Generate the combinations of K distinct objects chosen from the N elements of a list.
+  def combinations[A](num: Int, list: List[A]): List[List[A]] = {
+    if(num == 1) return list.map(item => item :: Nil)
+    list.zipWithIndex.flatMap{
+      case (item, index) if (list.length - index) >= num => {
+        combinations(num - 1, list.drop(index + 1)).map(nextItems => {
+          item :: nextItems
+        })
+      }
+      case _ =>{
+        Nil
+      }
+    }.toList
+  }
+
+  //P27 (**) Group the elements of a set into disjoint subsets.
+  def group3[A](list: List[A]): List[List[List[A]]] = {
+    val x = for{
+      first <- combinations(2, list)
+      other = list.filter(item => ! first.contains(item))
+      second <- combinations(3, other)
+    } yield List(first, second, other.filter(item => ! second.contains(item)))
+    x.toList
+  }
+
+  def group[A](ns: List[Int], list: List[A]): List[List[List[A]]] = ns match{
+    case Nil => List(Nil)
+    case n :: ns => combinations(n, list) flatMap{c =>
+      group(ns, list.filter(item => ! c.contains(item))) map { c :: _ }
+    }
+  }
+
+  //P28 (**) Sorting a list of lists according to length of sublists.
+  def lsort[A](list: List[List[A]]): List[List[A]] = {
+    list.sortBy(item => item.length)
+  }
+
+  def lsortFreq[A](list: List[List[A]]): List[List[A]] = {
+    val list2 = lsort(list)
+    val list3 = list2.foldLeft(List.empty[(Int, List[List[A]])])((z, n) => (z, n) match {
+      case (x :: l, n) if x._2.head.length == n.length => (x._1 + 1, n :: x._2) :: l
+      case (z, n) => (1, n :: Nil) :: z
+    })
+    list3.sortBy(item => item._1).flatMap(item => item._2.reverse)
   }
 }
