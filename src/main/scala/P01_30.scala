@@ -4,10 +4,6 @@
 import java.util.Date
 
 object P01_30 {
-  def main(args: Array[String]): Unit = {
-    println(lsortFreq(List(List('a, 'b, 'c), List('d, 'e), List('f, 'g, 'h), List('d, 'e), List('i, 'j, 'k, 'l), List('m, 'n), List('o))))
-  }
-
   //P01 (*) Find the last element of a list.
   def last[A](list: List[A]): A = list match {
     case h :: Nil => h

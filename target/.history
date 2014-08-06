@@ -9,3 +9,6 @@ run
 exit
 run
 exit
+run
+clean
+run
