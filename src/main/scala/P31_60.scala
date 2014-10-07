@@ -21,8 +21,30 @@ class S99Int(val n: Int) {
   }
 
   //P35 (**) Determine the prime factors of a given positive integer.
-  def primeFactors : Int = {
-    (1 to n).filter(n.isComprimeTo(_)).length
+  def primeFactors: List[Int] = {
+    def primeFactorsR(x: Int, s: Stream[Int]): List[Int] = {
+      if(x.isPrime) List(x)
+      else if(x % s.head == 0) s.head :: primeFactorsR(x / s.head, s)
+      else primeFactorsR(x, s.tail)
+    }
+
+    primeFactorsR(n, sieve(Stream.from(2)))
+  }
+
+  //P36 (**) Determine the prime factors of a given positive integer (2).
+  def primeFactorMultiplicity: List[(Int, Int)] = {
+    def encode(items: List[Int]): List[(Int, Int)] = {
+      val (packed, next) = items.span(_ == items.head)
+      if(next == Nil) List((packed.head, packed.length))
+      else (packed.head, packed.length) :: encode(next)
+    }
+
+    encode(n.primeFactors)
+  }
+
+  //P37 (**) Calculate Euler's totient function phi(m) (improved).
+  def phi_improved: Int = {
+    n.primeFactorMultiplicity.foldLeft(1)((z, x) => z * (x._1 - 1) * math.pow(x._1, x._2 - 1) toInt)
   }
 }
 
@@ -32,7 +54,8 @@ object S99Int {
   val primes = Stream.cons(2, Stream.from(3, 2) filter { _.isPrime })
 
   def main(args: Array[String]): Unit = {
-    println(10.totient)
+    println(10.phi_improved)
+    println(10.totient2)
   }
 
   //P32 (**) Determine the greatest common divisor of two positive integer numbers.
@@ -42,6 +65,8 @@ object S99Int {
     gcd(n, m % n)
   }
 
-
+  def sieve(s: Stream[Int]): Stream[Int] = {
+    Stream.cons(s.head, s.tail.filter(_ % s.head != 0))
+  }
 }
 
