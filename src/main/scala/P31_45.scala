@@ -46,17 +46,13 @@ class S99Int(val n: Int) {
   def phi_improved: Int = {
     n.primeFactorMultiplicity.foldLeft(1)((z, x) => z * (x._1 - 1) * math.pow(x._1, x._2 - 1) toInt)
   }
+
 }
 
 object S99Int {
   implicit def int2S99Int(i: Int): S99Int = new S99Int(i)
 
   val primes = Stream.cons(2, Stream.from(3, 2) filter { _.isPrime })
-
-  def main(args: Array[String]): Unit = {
-    println(10.phi_improved)
-    println(10.totient2)
-  }
 
   //P32 (**) Determine the greatest common divisor of two positive integer numbers.
   def gcd(m: Int, n: Int): Int = {
